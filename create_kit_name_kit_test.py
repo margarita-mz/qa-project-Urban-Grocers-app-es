@@ -36,51 +36,48 @@ def negative_assert_code_400(name):
 
 # Prueba 1: El número permitido de caracteres (1)
 def test_create_kit_1_letter_in_name_get_success_response():
-    positive_assert("a")
+    positive_assert(data.one_letter_name)
 
 
 # Prueba 2: El número permitido de caracteres (511)
-def test_create_kit_511_letter_in_name_get_success_response():
-    positive_assert("AbcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdAbcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabC")
-
+def test_create_kit_five_hundred_eleven_letter_in_name_get_success_response():
+    positive_assert(data.five_hundred_eleven_letter_name)
 
 # Prueba 3: El número de caracteres es menor que la cantidad permitida (0)
-def test_create_kit_menor_to_0_letter_name_get_error_response():
-    kit_body = {"name": ""}
-    auth_token = get_new_user_token()
-    response = sender_stand_request.post_new_client_kit(kit_body, auth_token)
-    assert response.status_code == 400
+def test_create_kit_minor_to_0_letter_name_get_error_response():
+    # Usamos la función de aserción negativa pasándole el dato desde data.py
+    negative_assert_code_400(data.zero_letter_name)
 
 # Prueba 4: El número de caracteres es mayor que la cantidad permitida (512)
-def test_create_kit_512_letter_in_name_get_error_response():
-    kit_body = {"name":"AbcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdAbcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcD"}
-    auth_token = get_new_user_token()
-    response = sender_stand_request.post_new_client_kit(kit_body, auth_token)
-    assert response.status_code == 400
+def test_create_kit_512_letter_name_get_error_response():
+    # Optimizamos llamando a la función que ya valida el status 400
+    negative_assert_code_400(data.five_hundred_twelve_letter_name)
 
 # Prueba 5: Se permiten caracteres especiales
 def test_create_kit_special_characters_in_name_get_success_response():
-    positive_assert('"№%@,"')
+    positive_assert(data.special_characters_name)
 
 # Prueba 6: Se permiten espacios
 def test_create_kit_spaces_are_permitted_in_name_get_success_response():
-    positive_assert(" A Aaa ")
+    positive_assert(data.spaces_name)
 
 # Prueba 7: Se permiten números
 def test_create_kit_numbers_in_name_get_success_response():
-    positive_assert("123")
+    positive_assert(data.numbers_name)
 
-# Prueba 8: El parámetro no se pasa en la solicitud
+
+# Prueba 8: El parámetro "name" no se pasa en la solicitud
 def test_create_kit_no_name_get_error_response():
-    # En este caso especial, enviamos un cuerpo vacío
-    kit_body = {}
+    kit_body = data.kit_body.copy()
+    kit_body.pop("name")
+
     auth_token = get_new_user_token()
     response = sender_stand_request.post_new_client_kit(kit_body, auth_token)
+
+    # El requisito pide 400, si llega 500, la prueba falla correctamente
     assert response.status_code == 400
 
 # Prueba 9: Se ha pasado un tipo de parámetro diferente (número)
-def test_create_kit_different_parameter_name_get_error_response():
-    kit_body = { "name": 123 }
-    auth_token = get_new_user_token()
-    response = sender_stand_request.post_new_client_kit(kit_body, auth_token)
-    assert response.status_code == 400
+def test_create_kit_different_parameter_type_get_error_response():
+    # Usamos la variable con valor numérico definida en data.py
+    negative_assert_code_400(data.numbers_name)
